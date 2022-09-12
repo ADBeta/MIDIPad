@@ -28,14 +28,13 @@
 RtMidiIn *midiin = new RtMidiIn();
 RtMidiOut *midiout = new RtMidiOut();
 
-//Define the midi configuation object
-MidiConfig MidiCfg;
+//Lighting controller class definition
+LightingController LightCtrl;
 
 //Create a cusom callback function, called when receiving messages
 //This callback splits the message into bytes and stores them in a message 
 //class object. 
-void getMsgAttributes(double delta_t,
-                      std::vector<unsigned char> *msg, void *) {
+void getMsgAttributes(double delta_t, MidiMsg *msg, void *) {
 	//Get the size of the vector in bytes
 	unsigned int nBytes = msg->size();
 	
@@ -52,28 +51,20 @@ void getMsgAttributes(double delta_t,
 	/* The fist byte is the status byte, use this (via enum) to take action */
 	//Note message
 	if(msg->at(0) == noteOn_t || msg->at(0) == noteOff_t) {
-		//Pass on the vector data to the NoteHandler class set, which will
-		//handle lighting, and pass information onto the sound controller
 		
-		unsigned char outMsg[3] = {144, msg->at(1)};
-		if(msg->at(0) == noteOn_t) { 
-			outMsg[2] = 0x01;
-		} else {
-			outMsg[2] = 0x00;
-		}
-		
-		midiout->sendMessage(outMsg, 3);		
-		
-		std::cout << "note Type" << std::endl;
 	}
 	
 	//TODO Slider message
 	
+	LightCtrl.test(msg);
+	
+	/*
 	//Go through the vector entries
 	for(unsigned int i = 0; i < nBytes; i++) {
 		std::cout << "Byte " << i << " = " << (int)msg->at(i) << ", ";
 	}
 	std::cout << std::endl;
+	*/
 	
 	//NOTE: delta_t is the diff in secs between messages. this may be useful
 	//at some point. I will leave a small of example of this functionality for
@@ -128,29 +119,11 @@ bool openMidiPort(int port) {
 		
 		//TODO check if output enabled
 		midiout->openPort(port);
-	
-		/*
-		//TODO NOTE This can be done with either array or vector
-		unsigned char msg[3][3] = {
-			{144, 5, 1},
-			{144, 6, 3},
-			{144, 7, 5},
-		};
-		// Program change: 192, 5
-		//message.push_back( 144 );
-		//message.push_back( 5 );
-		//message.push_back( 3 );
-		midiout->sendMessage(msg[0], 3);
-		midiout->sendMessage(msg[1], 3);
-		midiout->sendMessage(msg[2], 3);
-		*/
 
 		//Set the callback function.  This should be done immediately after
 		//opening the port to avoid having incoming messages written to the
 		//queue instead of sent to the callback function.
-		
 		midiin->setCallback(&getMsgAttributes);
-		
 		//Don't ignore sysex, timing, or active sensing messages on midiin
 		midiin->ignoreTypes(false, false, false);
 
@@ -171,3 +144,87 @@ void cleanupMidi() {
 	delete midiin;
 	delete midiout;
 }
+
+/** Lighting Functions ********************************************************/
+void LightingController::test(MidiMsg *input) {
+	//Get the size of the vector in bytes //TODO Make this definable
+	unsigned int nBytes = input->size();
+	
+	//Output message vector
+	static MidiMsg output;
+	output.clear();
+	
+	//TODO Rename these variables
+	//Go through the message bytes, and the layout required
+	for(unsigned int byte = 0; byte < nBytes; byte++) {
+		MsgByte mask = MsgFormat[byte];
+		
+		std::cout << byte << ": ";
+		
+		//Set the ouput
+		switch(mask) {
+			case noteOn:
+				std::cout << "144";
+				output.push_back(noteOn);
+				break;
+
+			case noteOff:
+				std::cout << "128";
+				output.push_back(noteOff);
+				break;
+				
+			case noteOffChan:
+				std::cout << "Note OFF + Channel";
+				break;	
+				
+			case noteOnChan:
+				std::cout << "Note ON + Channel";
+				break;
+				
+			case colourID:
+				//Figure out what colour is needed, and save it to a variable
+				unsigned char colourSel;
+				if(input->at(0) == noteOn) {
+					colourSel = colourACTIVE;
+				}
+				
+				if(input->at(0) == noteOff) {
+					colourSel = colourLOADED;
+				}
+				
+				//TODO check loaded map
+				
+				output.push_back(colourSel);
+				std::cout << (int)colourSel;
+				break;
+				
+			case keyID:
+				//Always set the keyID to the Key/Pitch message variable
+				std::cout << (int)input->at(1);
+				output.push_back(input->at(1));
+				break;
+				
+			case velocity:
+				std::cout << "Velocity";
+				break;
+				
+			default:
+				std::cout << "Unknown";
+				
+		}
+	
+		std::cout << "\t";
+		
+	
+	
+		//Test output bytes TODO
+		//std::cout << (int)input->at(byte) << "\t";
+	}
+	
+	
+	midiout->sendMessage(&output);	
+	
+	std::cout << std::endl;
+	
+}
+

@@ -75,12 +75,11 @@ class LightingController {
 	} MsgByte;
 	
 	//TODO MidiMsg templating system for multiple devices later
-	const MsgByte MsgFormat[3] = {noteOn, keyID, colourID};
-	unsigned char colourIDLE = 0x00;
-	unsigned char colourACTIVE = 0x05;
-	unsigned char colourLOADED = 0x01;
+	const unsigned int frmtIdle[3] = {noteOn, keyID, 0x00};
+	const unsigned int frmtActive[3] = {noteOn, keyID, 0x01};
+	const unsigned int frmtLoaded[3] = {noteOn, keyID, 0x05};
 	
-	void test(MidiMsg *);
+	void lightKey(MidiMsg *);
 	
 	//TODO get number of keys from config
 	//Create an array of messages for idle, pressed and loaded(?) states

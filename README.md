@@ -1,40 +1,36 @@
 # MIDIPad 
+### (c) ADBeta 2022 (C++ Edition)
+MIDIPad is a simple MIDI drum machine for linux, using Launchpad, APC etc.  
+It allows for MIDI Sequencer or Drum Machine modes, with multiple audio   
+backends (?).
 
-(C++ Edition)
-
-CURRENTLY BEING FINISHED
-MIDIPad is a simple MIDI drum machine for linux, using Launchpad, APC etc.
+Currently work in progress
 
 ## Description
+Due to the lack of FLStudio and Abelton, others have made replacements or  
+packages to fill the gap - None of the main ones are easy to use or simple,  
+and some do not include the functionality I require and would like in my  
+package.  
 
-This program is a fast implimentation of a basic MIDI input/output drum machine.
-It is not intened to be fast, or particularly useful. 
+It will be able to do simple Drum Machine triggering audio samples, as well as  
+time based sequencer functionality. Eventually I would like to build in a very  
+higly integrated audio backend without different output APIs.  
 
-Note: This is designed for linux specifically to make up for the lack of 
-FLStudio or Ableton etc. 
+I also would like to eventually create a linear expandable timebase to create  
+tracks of arbitrary length with audio track drag and drop. Much like FLStudio.  
 
-## Dependancies & How To Use
-
-You will need to copy some sample files to a directory called "samples" :
-kick.wav
-snare.wav
-hat.wav
-cowbell.wav
-crash.wav
+** This is just a hobby project. It may be slow to be developed and will not  
+be particularly amazing compared to other projects **  
 
 ## TO-DO 
 
-Currently the program is only tested with the "AKAI APC Mini", the lighting 
-commands may not work with other deivces, no guarantees are made it wil work
-at all for other devices
 
-Current very janky, and with limited functionality. Future revisions will 
-have GUI modules, faster execution and more options, controls and functions
-(Revision 2 will be written in C++)
+##Changelog
+* 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  
 
-Written by ADBeta 
+
+### Version 2.0.1
 
 ## Licence
-
 MIDIPad is under the GPL (GPL3.0), please see LICENCE for information
 

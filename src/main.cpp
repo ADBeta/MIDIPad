@@ -10,6 +10,11 @@ int main(int argc, char *argv[]){
 	//cliSelectMidiPort();
 	openMidiPort(cliSelectMidiPort());
 
+	//TODO get rid of this eventually
+	std::cout << "\nReading MIDI input ... press <enter> to quit.\n";
+	char input;
+	std::cin.get(input);
+
 	cleanupMidi();
 	return 0;
 }

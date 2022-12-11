@@ -51,12 +51,10 @@ void getMsgAttributes(double delta_t, MidiMsg *msg, void *) {
 	/* The fist byte is the status byte, use this (via enum) to take action */
 	//Note message
 	if(msg->at(0) == noteOn_t || msg->at(0) == noteOff_t) {
-		
+		LightCtrl.lightKey(msg);
 	}
 	
 	//TODO Slider message
-	
-	LightCtrl.test(msg);
 	
 	/*
 	//Go through the vector entries
@@ -126,13 +124,7 @@ bool openMidiPort(int port) {
 		midiin->setCallback(&getMsgAttributes);
 		//Don't ignore sysex, timing, or active sensing messages on midiin
 		midiin->ignoreTypes(false, false, false);
-
-
-		//TODO get rid of this eventually
-		std::cout << "\nReading MIDI input ... press <enter> to quit.\n";
-		char input;
-		std::cin.get(input);
-
+		
 	} catch ( RtMidiError &error ) {
 		error.printMessage();
 	}
@@ -146,28 +138,47 @@ void cleanupMidi() {
 }
 
 /** Lighting Functions ********************************************************/
-void LightingController::test(MidiMsg *input) {
+void LightingController::lightKey(MidiMsg *input) {
 	//Get the size of the vector in bytes //TODO Make this definable
 	unsigned int nBytes = input->size();
 	
 	//Output message vector
-	static MidiMsg output;
-	output.clear();
+	MidiMsg output;
+	
+	const unsigned int *MsgFormat;
+	//Figure out what format is needed, and set it as the pointer MsgFormat
+	if(input->at(0) == noteOn) {
+		MsgFormat = frmtActive;
+	}
+	
+	if(input->at(0) == noteOff) {
+		MsgFormat = frmtIdle;
+	}
+	
+	//TODO check loaded map
+	
+	//////TODO Give this a big think and figure out how it should be. 
+	//Remove colourID?
+	//Keep the multiple formats?
+	
+	
 	
 	//TODO Rename these variables
 	//Go through the message bytes, and the layout required
 	for(unsigned int byte = 0; byte < nBytes; byte++) {
-		MsgByte mask = MsgFormat[byte];
+		unsigned int mask = MsgFormat[byte];
 		
 		std::cout << byte << ": ";
 		
 		//Set the ouput
 		switch(mask) {
+			//NoteON is always the standard MIDI On signal
 			case noteOn:
 				std::cout << "144";
 				output.push_back(noteOn);
 				break;
-
+			
+			//NoteOFF is always the standard MIDI Off signal
 			case noteOff:
 				std::cout << "128";
 				output.push_back(noteOff);
@@ -182,24 +193,13 @@ void LightingController::test(MidiMsg *input) {
 				break;
 				
 			case colourID:
-				//Figure out what colour is needed, and save it to a variable
-				unsigned char colourSel;
-				if(input->at(0) == noteOn) {
-					colourSel = colourACTIVE;
-				}
+				//TODO
+				output.push_back(0);
 				
-				if(input->at(0) == noteOff) {
-					colourSel = colourLOADED;
-				}
-				
-				//TODO check loaded map
-				
-				output.push_back(colourSel);
-				std::cout << (int)colourSel;
 				break;
 				
-			case keyID:
-				//Always set the keyID to the Key/Pitch message variable
+			//Always set the keyID to the Key/Pitch message variable
+			case keyID:	
 				std::cout << (int)input->at(1);
 				output.push_back(input->at(1));
 				break;
@@ -208,23 +208,17 @@ void LightingController::test(MidiMsg *input) {
 				std::cout << "Velocity";
 				break;
 				
+			//If the current byte isn't a control byte, push the raw byte
 			default:
-				std::cout << "Unknown";
-				
+				output.push_back(mask);
+				std::cout << "RAW Byte(" << mask << ")";
 		}
 	
 		std::cout << "\t";
-		
-	
-	
-		//Test output bytes TODO
-		//std::cout << (int)input->at(byte) << "\t";
 	}
-	
 	
 	midiout->sendMessage(&output);	
 	
 	std::cout << std::endl;
-	
 }
 

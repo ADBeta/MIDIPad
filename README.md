@@ -1,6 +1,8 @@
 # MIDIPad 
 
-(Python Edition)
+(C++ Edition)
+
+CURRENTLY BEING FINISHED
 MIDIPad is a simple MIDI drum machine for linux, using Launchpad, APC etc.
 
 ## Description
@@ -12,12 +14,6 @@ Note: This is designed for linux specifically to make up for the lack of
 FLStudio or Ableton etc. 
 
 ## Dependancies & How To Use
-
-* rtmidi-python
-* simpleaudio
-
-Run MIDIPad with python3, the port can be set via the MIDIPad.py file or via
-command line list and select.
 
 You will need to copy some sample files to a directory called "samples" :
 kick.wav

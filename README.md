@@ -25,7 +25,7 @@ be particularly amazing compared to other projects **
 ## TO-DO 
 
 
-##Changelog
+## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  
 
 

@@ -30,6 +30,7 @@ be particularly amazing compared to other projects **
 * Impliment and test the audio handler API
 * design simple container for key  data, press time, unified data container
 * design time based sequencer and UI/CLI elements to support it.
+* add a fully capable error handler for CLI and UI
 
 ## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  

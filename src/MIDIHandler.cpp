@@ -35,6 +35,15 @@ namespace LightCtrl {
 	//MIDI Message Byte values that trigger a lighting event. 
 	//Add or edit values to create more events.
 	int lightEventByte[2] = {144, 128};
+	
+	//enum event types to the values in lightEventByte. For example by default
+	//lightEventByte[0] is 144, which is light_on event. these can be modified
+	//by functions later depending on flags.
+	enum eventID {
+		light_on = 0,
+		light_off = 1,
+	}; 
+	
 	//How many bytes are in the array.
 	int lightEventByteCount = sizeof(lightEventByte) / sizeof(int);
 }
@@ -62,7 +71,10 @@ void getMsgAttributes(double delta_t, MidiMsg *msg, void *) {
 	if(MIDIDebug == true) CLIDebugMsg(msg);
 	
 	//Check if the message is one that the Lighting Controller Should care about
-	std::cout << LightCtrl::isValidMsg(msg) << std::endl;
+	//if(LightCtrl::isValidMsg(msg)) {
+		std::cout << LightCtrl::getEventID(msg) << std::endl;
+	//}
+	
 	//NOTE: delta_t is the diff in secs between messages. this may be useful
 	//at some point. I will leave a small of example of this functionality for
 	//reference if it useful at some point
@@ -152,19 +164,19 @@ void CLIDebugMsg(MidiMsg *debugMsg) {
 /** Lighting Control Functions ************************************************/
 namespace LightCtrl {
 ////
-bool isValidMsg(MidiMsg *msg) {
+int getEventID(MidiMsg *msg) {
 	//Get the message type, the first byte of the message vector.
 	int msgTypeByte = (int)msg->at(0);
 	
 	//Go through all the trigger bytes and look for a match.
 	for(int leb = 0; leb < lightEventByteCount; leb++) {
 		if(msgTypeByte == lightEventByte[leb]) {
-			return true;
+			return leb;
 		}
 	}
 	
 	//If no match is found
-	return false;
+	return -1;
 }
 
 

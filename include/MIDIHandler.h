@@ -56,14 +56,13 @@ namespace LightCtrl {
 	//Array of ints, bytes that can trigger a lighting event. 
 	//See MIDIHandler.cpp to edit or add values.
 	extern int lightEventByte[];
+
 	//How many bytes are in the lighting trigger array.
 	extern int lightEventByteCount;
 	
 	
-	
-	
-	//Return if current message type should trigger a lighting event.
-	bool isValidMsg(MidiMsg *);
+	//Does the message relate to an event ID? If so return ID#, if not return -1
+	int getEventID(MidiMsg *);
 
 }; //namespace LightCtrl
 	

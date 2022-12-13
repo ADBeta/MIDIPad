@@ -1,16 +1,17 @@
+/* This is a testing branch for now. It does not perform any useful function */
 #include "MIDIHandler.h"
 
 #include <iostream>
 #include <cstdlib>
 
 int main(int argc, char *argv[]){
+	//Enable debug mode
+	MIDIDebug = true;
 	
-	//std::cout << MidiConfig::message[0] << MidiConfig::message[1] << MidiConfig::message[2] << std::endl;	
-	
-	//cliSelectMidiPort();
+	//Open a MIDI port that the user can select via the CLI
 	openMidiPort(cliSelectMidiPort());
 
-	//TODO get rid of this eventually
+	//Tell the user how to exit. The callback function will take over.
 	std::cout << "\nReading MIDI input ... press <enter> to quit.\n";
 	char input;
 	std::cin.get(input);

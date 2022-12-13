@@ -22,8 +22,14 @@ tracks of arbitrary length with audio track drag and drop. Much like FLStudio.
 ** This is just a hobby project. It may be slow to be developed and will not  
 be particularly amazing compared to other projects **  
 
-## TO-DO 
+## Dependancies
+* rtmidi library
 
+## TO-DO 
+* Choose audio controller
+* Impliment and test the audio handler API
+* design simple container for key  data, press time, unified data container
+* design time based sequencer and UI/CLI elements to support it.
 
 ## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  

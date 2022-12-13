@@ -1,19 +1,20 @@
 /*******************************************************************************
 * This is part of the MIDIPad program
 *
-* This header/c++ is to control and read the MIDI device. This requres the
+* This header/C++ is to control and read the MIDI device. This requres the
 * RtMidi Libraries, availible at https://github.com/thestk/rtmidi (preferably
 * through your package manager)
 *
 * MIDIPad is designed specifically around Linux, as windows has most of the 
-* MIDI/Music Production software. This is a side project, not intended ot have
-* any real-world use. I hold NO RESPONSIBILTY or provide NO WARRANTY.
+* MIDI/Music Production software. This is a side project, not intended to have
+* any real-world use. I provide NO WARRANTY.
 * MIDIPad is under the GPLv3 licence. Please see the LICENCE file included 
 * with this program for more information. 
 * ------------------------------------------------------------------------------
 * This has only been tested on the 'AKAI APC Mini' device. I have given
 * as much thought as I can into support for other deivces but I have none to 
-* test with. Please feel free to get in touch
+* test with. Please feel free to test it with other devices and get in touch or
+* do your own patches to get those devices working.
 *
 * (c) ADBeta 2022 
 *******************************************************************************/
@@ -25,85 +26,45 @@
 #include <limits>
 #include "RtMidi.h" //Through pacman is located in /usr/include
 
-//TODO config must have note keys and system keys, with ranges(?)
-
-/** Global Enums and Types ****************************************************/
-//What each STATUS Byte from the MIDI standard means
-enum MidiStatus : unsigned char {
-	noteOff_t = 128,
-	noteOn_t = 144,
-};
-
-//MIDI Message type (multiple bytes)
+/** RtMidi Vars/Functions *****************************************************/
+//MIDI Message type (multiple byte vector)
 typedef std::vector<unsigned char> MidiMsg;
 
-//TODO
-/** Configuration class *******************************************************/
-namespace MidiConfig {
-	//TODO filename for config file. input/output settings. key layout. device
-	//type. sound mode(?). key pressed & key idle message.
-
-	//Is sending MIDI messages to the device permitted
-	extern bool outputEnabled;
-	
-	//Number of keys that the device has
-	extern unsigned int noteKeys;
-	
-	
-
-};
-
-/** Lighting Controller *******************************************************/
-class LightingController {
-	public:
-	
-	//TODO Make this able to hold idle, loaded and pressed bytes. arbitrary 
-	//data in the enum
-	//Contain raw 8bit bytes, as well as a mask for keywords and keytypes
-	typedef enum MsgByte {
-		//Note ON and OFF are aliased directly to their values.
-		noteOn = 144, //Pure note ON (144)
-		noteOff = 128, //Note OFF (128)
-		
-		//Aliased to upper 8 bits
-		noteOnChan		= 1 << 8, //Note ON, plus the channel data
-		noteOffChan		= 2 << 8, //Note OFF plus channel data
-		colourID		= 3 << 8, //Raw colour data
-		keyID			= 4 << 8, //Current button that is being pressed
-		velocity		= 5 << 8, //Velocity of the key being pressed
-		
-	} MsgByte;
-	
-	//TODO MidiMsg templating system for multiple devices later
-	const unsigned int frmtIdle[3] = {noteOn, keyID, 0x00};
-	const unsigned int frmtActive[3] = {noteOn, keyID, 0x01};
-	const unsigned int frmtLoaded[3] = {noteOn, keyID, 0x05};
-	
-	void lightKey(MidiMsg *);
-	
-	//TODO get number of keys from config
-	//Create an array of messages for idle, pressed and loaded(?) states
-	
-
-}; //class LightCtrl
-extern LightingController LightCtrl;
-
-/** RtMidi Vars/Functions *****************************************************/
 //RtMidiIn In and out objects
 extern RtMidiIn *midiin;
 extern RtMidiOut *midiout;
 
-int cliSelectMidiPort();
-bool openMidiPort(int);
+//Debug flag. This will enable CLI output whenever a key is pressed. (see funct)
+extern bool MIDIDebug;
+void CLIDebugMsg(MidiMsg *);
 
-//Callback function when messages come through
+//MIDI Configuration variables
+extern bool MIDILightingEnabled;
+
+//Port selection and opening functions, for CLI and UI
+int cliSelectMidiPort();
+void openMidiPort(int);
+
+//Callback function. Executed every time a message is received.
 void getMsgAttributes(double, std::vector<unsigned char> *, void *);
-//CLI control to select a MIDI port
-int cliSelectMidiPort();
 
-//Open a port for MIDI in and out
-bool openMidiPort(int port);
-
+//Close the MIDI port, delete vectors and perform RAM cleanup.
 void cleanupMidi();
+
+/** Lighting Controller *******************************************************/
+namespace LightCtrl {
+	//Array of ints, bytes that can trigger a lighting event. 
+	//See MIDIHandler.cpp to edit or add values.
+	extern int lightEventByte[];
+	//How many bytes are in the lighting trigger array.
+	extern int lightEventByteCount;
+	
+	
+	
+	
+	//Return if current message type should trigger a lighting event.
+	bool isValidMsg(MidiMsg *);
+
+}; //namespace LightCtrl
 	
 #endif

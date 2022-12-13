@@ -2,9 +2,9 @@
 ### (c) ADBeta 2022 (C++ Edition)
 MIDIPad is a simple MIDI drum machine for linux, using Launchpad, APC etc.  
 It allows for MIDI Sequencer or Drum Machine modes, with multiple audio   
-backends (?).
+backends (?).  
 
-Currently work in progress
+Currently work in progress  
 
 ## Description
 Due to the lack of FLStudio and Abelton, others have made replacements or  
@@ -23,21 +23,21 @@ tracks of arbitrary length with audio track drag and drop. Much like FLStudio.
 be particularly amazing compared to other projects **  
 
 ## Dependancies
-* rtmidi library
+* rtmidi library  
 
 ## TO-DO 
-* Choose audio controller
-* Impliment and test the audio handler API
-* design simple container for key  data, press time, unified data container
-* design time based sequencer and UI/CLI elements to support it.
-* add a fully capable error handler for CLI and UI
+* Choose audio controller  
+* Impliment and test the audio handler API  
+* design simple container for key  data, press time, unified data container  
+* design time based sequencer and UI/CLI elements to support it.  
+* add a fully capable error handler for CLI and UI  
 
 ## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  
-
+* 2.0.2 - Removed un-needed and broken code. Refactored a lot of functions.  
+* 2.0.3 - Refactored the lighting controller to be more adaptable for future.  
 
 ### Version 2.0.1
 
 ## Licence
 MIDIPad is under the GPL (GPL3.0), please see LICENCE for information
-

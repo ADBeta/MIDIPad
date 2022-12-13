@@ -1,2 +1,0 @@
-This Binary file was compiled on an Arch system, using intel x86/64 architecture
-with intergrated graphics.

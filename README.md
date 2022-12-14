@@ -31,11 +31,15 @@ be particularly amazing compared to other projects **
 * design simple container for key  data, press time, unified data container  
 * design time based sequencer and UI/CLI elements to support it.  
 * add a fully capable error handler for CLI and UI  
+* long term: add a customizable config file to add more lighting controls. e.g.  
+button count, lighting controls, lighting commands, default values etc  
 
 ## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  
 * 2.0.2 - Removed un-needed and broken code. Refactored a lot of functions.  
 * 2.0.3 - Refactored the lighting controller to be more adaptable for future.  
+* 2.0.4 - Added higher granularity for the lighitng controller.  
+* 2.1.4 - Changed lightHandler implimentation again. -_-  
 
 ### Version 2.0.1
 

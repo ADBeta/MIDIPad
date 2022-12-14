@@ -53,17 +53,35 @@ void cleanupMidi();
 
 /** Lighting Controller *******************************************************/
 namespace LightCtrl {
+	//Class forward declaration. See firther down for implimentation.
+	class LightMan;
+	
+	
 	//Array of ints, bytes that can trigger a lighting event. 
 	//See MIDIHandler.cpp to edit or add values.
-	extern int lightEventByte[];
+	extern int eventTriggerByte[];
 
 	//How many bytes are in the lighting trigger array.
-	extern int lightEventByteCount;
-	
+	extern int eventTriggerCount;
 	
 	//Does the message relate to an event ID? If so return ID#, if not return -1
-	int getEventID(MidiMsg *);
+	int getEventID(MidiMsg*);
+	
+	//Take an event ID and enact control. Pass the MIDI message also.
+	void eventHandler(int, MidiMsg*);
 
 }; //namespace LightCtrl
+
+//TODO write better comments here
+//Light Controller Internal Key Class. Holds light number, mode, code, etc 
+class LightCtrl::LightMan {
+	public:
+	//Constructor to pass how many lights there are on the unit being configured
+	LightMan(int lights);
 	
+	std::string test;
+
+}; //class LightMan
+
+
 #endif

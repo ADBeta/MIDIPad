@@ -17,7 +17,7 @@
 * do your own patches to get those devices working.
 *
 * (c) ADBeta 2022 
-* Version 2.0.2
+* Version 2.1.4
 *******************************************************************************/
 #include "MIDIHandler.h"
 
@@ -26,26 +26,31 @@
 #include <limits>
 #include "RtMidi.h" //Through pacman is located in /usr/include
 
+//TODO Config file to read these values
+const int conf_keys_audio = 64;
+const int conf_keys_control = 17;
+
+//TODO heirachy based key handler, class with key ID, type, and metadata/command
+//for example key(0, audio, "test.txt") and key(71, control, "cmd_send")
+// ^^^^ Meta or command can be sent via text or pointer to a lookup table.
+
+//TODO Lighting button data, pressed, released, mode(toggle or momentary), etc
+
 //Define the MIDI in and out objects
 RtMidiIn *midiin = new RtMidiIn();
 RtMidiOut *midiout = new RtMidiOut();
 
 //Lighting Controller Variables.
-namespace LightCtrl { 
+namespace LightCtrl {
+	//Construct the LightMan Class with the number of lights the system has
+	LightMan(64);
+	
 	//MIDI Message Byte values that trigger a lighting event. 
 	//Add or edit values to create more events.
-	int lightEventByte[2] = {144, 128};
-	
-	//enum event types to the values in lightEventByte. For example by default
-	//lightEventByte[0] is 144, which is light_on event. these can be modified
-	//by functions later depending on flags.
-	enum eventID {
-		light_on = 0,
-		light_off = 1,
-	}; 
-	
-	//How many bytes are in the array.
-	int lightEventByteCount = sizeof(lightEventByte) / sizeof(int);
+	int eventTriggerByte[2] = {144, 126};
+		
+	//How many bytes are in the trigger array.
+	int eventTriggerCount = sizeof(eventTriggerByte) / sizeof(int);
 }
 
 //Configuration extern variables
@@ -68,12 +73,18 @@ void getMsgAttributes(double delta_t, MidiMsg *msg, void *) {
 	}
 	
 	//If the Debug flag is set, call the debug output function.
-	if(MIDIDebug == true) CLIDebugMsg(msg);
+	if(MIDIDebug) CLIDebugMsg(msg);
 	
-	//Check if the message is one that the Lighting Controller Should care about
-	//if(LightCtrl::isValidMsg(msg)) {
-		std::cout << LightCtrl::getEventID(msg) << std::endl;
-	//}
+	//If Output is enabled, do lighting control.
+	if(MIDILightingEnabled) {
+		int eventID = LightCtrl::getEventID(msg);
+		
+		//Check if the message is relating to a lighting event.
+		if(eventID != -1) {
+			//Send that ID to the main light control function
+			LightCtrl::eventHandler(eventID, msg);
+		}
+	}
 	
 	//NOTE: delta_t is the diff in secs between messages. this may be useful
 	//at some point. I will leave a small of example of this functionality for
@@ -138,7 +149,7 @@ void openMidiPort(int port) {
 	} catch ( RtMidiError &error ) {
 		error.printMessage();
 		
-		//TODO exit program		
+		//TODO error and exit program		
 		exit(EXIT_FAILURE);
 	}
 }
@@ -169,8 +180,8 @@ int getEventID(MidiMsg *msg) {
 	int msgTypeByte = (int)msg->at(0);
 	
 	//Go through all the trigger bytes and look for a match.
-	for(int leb = 0; leb < lightEventByteCount; leb++) {
-		if(msgTypeByte == lightEventByte[leb]) {
+	for(int leb = 0; leb < eventTriggerCount; leb++) {
+		if(msgTypeByte == eventTriggerByte[leb]) {		
 			return leb;
 		}
 	}
@@ -178,6 +189,21 @@ int getEventID(MidiMsg *msg) {
 	//If no match is found
 	return -1;
 }
+////
+void eventHandler(int eventID, MidiMsg *msg) {
+	//Failsafe if input is a non-light event
+	if(eventID == -1) return;
+	
+	//Output message array
+	unsigned char midiOutMsg[3];
 
+			midiOutMsg[0] = 144;
+			midiOutMsg[1] = msg->at(1);
+			midiOutMsg[2] = 5; //Off
+
+	
+	//Send the MIDI message out.
+	midiout->sendMessage(midiOutMsg, 3);
+}
 
 }; //nameapace LightCtrl

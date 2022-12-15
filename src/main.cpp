@@ -8,6 +8,8 @@ int main(int argc, char *argv[]){
 	//Enable debug mode
 	MIDIDebug = true;
 
+	findKeyWithID(4);	
+	
 	//Open a MIDI port that the user can select via the CLI
 	openMidiPort(cliSelectMidiPort());
 

@@ -17,7 +17,7 @@
 * do your own patches to get those devices working.
 *
 * (c) ADBeta 2022 
-* Version 2.1.4
+* Version 2.1.5
 *******************************************************************************/
 #include "MIDIHandler.h"
 
@@ -26,32 +26,18 @@
 #include <limits>
 #include "RtMidi.h" //Through pacman is located in /usr/include
 
-//TODO Config file to read these values
-const int conf_keys_audio = 64;
-const int conf_keys_control = 17;
-
 //TODO heirachy based key handler, class with key ID, type, and metadata/command
 //for example key(0, audio, "test.txt") and key(71, control, "cmd_send")
 // ^^^^ Meta or command can be sent via text or pointer to a lookup table.
 
-//TODO Lighting button data, pressed, released, mode(toggle or momentary), etc
+int MIDIKeyCount = 64;
 
 //Define the MIDI in and out objects
 RtMidiIn *midiin = new RtMidiIn();
 RtMidiOut *midiout = new RtMidiOut();
 
-//Lighting Controller Variables.
-namespace Lighting {
-	//Construct the LightMan Class with the number of lights the device has,
-	//TODO integrate this with the LightMeta struct.
-	LightMan LightMan(64);
-	
-	
-}
-
 //Configuration extern variables
 bool MIDIDebug = false;
-bool MIDILightingEnabled = true;
 
 /** System background functions ***********************************************/
 //Callback function, execs every time a message is received. Splits message into
@@ -71,10 +57,9 @@ void getMsgAttributes(double delta_t, MidiMsg *msg, void *) {
 	//If the Debug flag is set, call the debug output function.
 	if(MIDIDebug) CLIDebugMsg(msg);
 	
-	//If Output is enabled, do lighting control.
-	if(MIDILightingEnabled) {
+	//See if the message[1] ID matches any of the MIDIKey IDs
 	
-	}
+	//If the key pressed has a light
 	
 	//NOTE: delta_t is the diff in secs between messages. this may be useful
 	//at some point. I will leave a small of example of this functionality for
@@ -131,8 +116,8 @@ void openMidiPort(int port) {
 		//Open the MIDI devices on the passed port ID
 		midiin->openPort(port);
 		
-		//If lighting or output is enabled, open an output port.
-		if(MIDILightingEnabled == true) midiout->openPort(port);
+		//Open an output port. TODO Handle errors if output is not supported
+		midiout->openPort(port);
 
 		//Set the callback function.  This should be done immediately after
 		//opening the port to avoid having incoming messages written to the
@@ -168,19 +153,15 @@ void CLIDebugMsg(MidiMsg *debugMsg) {
 	std::cout << std::endl;
 }
 
-/** Lighting Control Functions ************************************************/
-namespace Lighting {
-////
+/** MIDIKey functions *********************************************************/
+//Set Array of MIDIKeys.
+MIDIKey *keyArray = new MIDIKey[MIDIKeyCount];
 
+MIDIKey *findKeyWithID(int ID) {
+	for(int key = 0; key < MIDIKeyCount; key++) {
+		std::cout << "Key: " << key << "\tKey ID: " << (int)keyArray[4].ID << std::endl;
+	}
 
-
-LightMan::LightMan(int lights) {
-	std::cout << lights << std::endl;
+	
 }
-
-
-}; //nameapace LightCtrl
-
-
-
 

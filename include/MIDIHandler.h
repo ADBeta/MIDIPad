@@ -38,9 +38,6 @@ extern RtMidiOut *midiout;
 extern bool MIDIDebug;
 void CLIDebugMsg(MidiMsg *);
 
-//MIDI Configuration variables
-extern bool MIDILightingEnabled;
-
 //Port selection and opening functions, for CLI and UI
 int cliSelectMidiPort();
 void openMidiPort(int);
@@ -51,37 +48,35 @@ void getMsgAttributes(double, std::vector<unsigned char> *, void *);
 //Close the MIDI port, delete vectors and perform RAM cleanup.
 void cleanupMidi();
 
-/** Lighting Controller *******************************************************/
-namespace LightCtrl {
-	//Class forward declaration. See firther down for implimentation.
-	class LightMan;
+/** Unified Key handling and Light Handling ***********************************/
+//TODO explain attributes and data TODO default?
+struct MIDIKey {
+	//MIDI Key ID. Byte as it is limited by MIDI Bytes.
+	unsigned char ID = 0;
+	
+	//MIDI Message Status byte triggers - pressed and released
+	unsigned char statusPressed = 0;
+	unsigned char statusReleased = 0;
+	
+	//Does this key have a light?
+	bool hasLight = false;
 	
 	
-	//Array of ints, bytes that can trigger a lighting event. 
-	//See MIDIHandler.cpp to edit or add values.
-	extern int eventTriggerByte[];
+	//TODO Key type
+	
+	//TODO pointer to function to call when pressed
 
-	//How many bytes are in the lighting trigger array.
-	extern int eventTriggerCount;
-	
-	//Does the message relate to an event ID? If so return ID#, if not return -1
-	int getEventID(MidiMsg*);
-	
-	//Take an event ID and enact control. Pass the MIDI message also.
-	void eventHandler(int, MidiMsg*);
 
-}; //namespace LightCtrl
+}; //struct MIDIKey
 
-//TODO write better comments here
-//Light Controller Internal Key Class. Holds light number, mode, code, etc 
-class LightCtrl::LightMan {
-	public:
-	//Constructor to pass how many lights there are on the unit being configured
-	LightMan(int lights);
-	
-	std::string test;
+//Number of keys, Set via config or manually.
+extern int MIDIKeyCount;
 
-}; //class LightMan
+//Array of MIDIKeys (on heap). Size defined by Number of keys. TODO config
+extern MIDIKey *keyArray;
+
+//Function that returns a pointer to a MIDIKey, if one exists with the ID Given.
+MIDIKey *findKeyWithID(int ID);
 
 
 #endif

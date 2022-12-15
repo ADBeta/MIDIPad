@@ -46,7 +46,9 @@ button count, lighting controls, lighting commands, default values etc
 * 2.0.4 - Added higher granularity for the lighitng controller.  
 * 2.1.4 - Changed lightHandler implimentation again. -_-  
 * 2.1.5 - Abandoned lighting implimentation. rolled key and light handling  
-into one structured method.
+into one structured method.  
+* 2.1.6 - Key Handling now has struct arrays, searching and identifiers. Needs  
+more work. 
 
 ## Licence
 MIDIPad is under the GPL (GPL3.0), please see LICENCE for information

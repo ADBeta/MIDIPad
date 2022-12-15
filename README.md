@@ -37,6 +37,7 @@ be particularly amazing compared to other projects **
 * add a customizable config file to add more lighting controls. e.g.  
 button count, lighting controls, lighting commands, default values etc  
 * Add animation lighting controller and easy config methods  
+* Create some methodology of changing how lights and keys are tirggered via config  
 
 ## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  

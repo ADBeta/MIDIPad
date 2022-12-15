@@ -26,13 +26,17 @@ be particularly amazing compared to other projects **
 * rtmidi library  
 
 ## TO-DO 
+* Add a quit option to the CLI port selection  
+* Make the cleanup function better and more actively clean RAM  
 * Choose audio controller  
 * Impliment and test the audio handler API  
 * design simple container for key  data, press time, unified data container  
 * design time based sequencer and UI/CLI elements to support it.  
 * add a fully capable error handler for CLI and UI  
-* long term: add a customizable config file to add more lighting controls. e.g.  
+### Longterm TO-DO
+* add a customizable config file to add more lighting controls. e.g.  
 button count, lighting controls, lighting commands, default values etc  
+* Add animation lighting controller and easy config methods  
 
 ## Changelog
 * 2.0.1 - Complete overhaul of systems and API calls. Finished some documentation.  
@@ -40,8 +44,6 @@ button count, lighting controls, lighting commands, default values etc
 * 2.0.3 - Refactored the lighting controller to be more adaptable for future.  
 * 2.0.4 - Added higher granularity for the lighitng controller.  
 * 2.1.4 - Changed lightHandler implimentation again. -_-  
-
-### Version 2.0.1
 
 ## Licence
 MIDIPad is under the GPL (GPL3.0), please see LICENCE for information

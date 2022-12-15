@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
 	//Enable debug mode
 	MIDIDebug = true;
 
-	findKeyWithID(4);	
+	std::cout << "pointer info: " << findKeyWithID(69)->identifier << std::endl;	
 	
 	//Open a MIDI port that the user can select via the CLI
 	openMidiPort(cliSelectMidiPort());

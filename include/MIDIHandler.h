@@ -61,6 +61,8 @@ struct MIDIKey {
 	//Does this key have a light?
 	bool hasLight = false;
 	
+	//Identifier string. Optional but useful to keep track of which key is which
+	std::string identifier = "undefined";
 	
 	//TODO Key type
 	
@@ -76,7 +78,6 @@ extern int MIDIKeyCount;
 extern MIDIKey *keyArray;
 
 //Function that returns a pointer to a MIDIKey, if one exists with the ID Given.
-MIDIKey *findKeyWithID(int ID);
-
+MIDIKey *findKeyWithID(unsigned char);
 
 #endif

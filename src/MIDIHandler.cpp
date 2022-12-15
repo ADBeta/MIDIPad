@@ -17,7 +17,7 @@
 * do your own patches to get those devices working.
 *
 * (c) ADBeta 2022 
-* Version 2.1.5
+* Version 2.1.6
 *******************************************************************************/
 #include "MIDIHandler.h"
 
@@ -157,10 +157,30 @@ void CLIDebugMsg(MidiMsg *debugMsg) {
 //Set Array of MIDIKeys.
 MIDIKey *keyArray = new MIDIKey[MIDIKeyCount];
 
-MIDIKey *findKeyWithID(int ID) {
+MIDIKey *findKeyWithID(unsigned char targetID) {
+	keyArray[9].identifier = "this one";
+	keyArray[9].ID = 69;
+
+	//Make a pointer follower(?) and initialize to NULL. use that to return obj
+
+	//Go through all the keys in the heap keyArray
 	for(int key = 0; key < MIDIKeyCount; key++) {
-		std::cout << "Key: " << key << "\tKey ID: " << (int)keyArray[4].ID << std::endl;
+		if(keyArray[key].ID == targetID) {
+			//If debug mode is enables, print some info.
+			std::cout << "Key ID " << (int)targetID << " Matches keyArray[" 
+			  << key << "] with Identifier string: " << keyArray[key].identifier
+			  << std::endl;
+			
+			//Return the pointer to the keyArray struct
+			return keyArray[key];
+		}
 	}
+	
+	//If not match is found: If degub mode is set, print a message.
+	std::cout << "Key ID " << (int)targetID << " Does not match a keyArray struct." << std::endl;
+	
+	return NULL;
+	
 
 	
 }

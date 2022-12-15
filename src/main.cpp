@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]){
 	//Enable debug mode
 	MIDIDebug = true;
-	
+
 	//Open a MIDI port that the user can select via the CLI
 	openMidiPort(cliSelectMidiPort());
 

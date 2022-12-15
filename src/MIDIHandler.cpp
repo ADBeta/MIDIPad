@@ -41,16 +41,12 @@ RtMidiIn *midiin = new RtMidiIn();
 RtMidiOut *midiout = new RtMidiOut();
 
 //Lighting Controller Variables.
-namespace LightCtrl {
-	//Construct the LightMan Class with the number of lights the system has
-	LightMan(64);
+namespace Lighting {
+	//Construct the LightMan Class with the number of lights the device has,
+	//TODO integrate this with the LightMeta struct.
+	LightMan LightMan(64);
 	
-	//MIDI Message Byte values that trigger a lighting event. 
-	//Add or edit values to create more events.
-	int eventTriggerByte[2] = {144, 126};
-		
-	//How many bytes are in the trigger array.
-	int eventTriggerCount = sizeof(eventTriggerByte) / sizeof(int);
+	
 }
 
 //Configuration extern variables
@@ -77,13 +73,7 @@ void getMsgAttributes(double delta_t, MidiMsg *msg, void *) {
 	
 	//If Output is enabled, do lighting control.
 	if(MIDILightingEnabled) {
-		int eventID = LightCtrl::getEventID(msg);
-		
-		//Check if the message is relating to a lighting event.
-		if(eventID != -1) {
-			//Send that ID to the main light control function
-			LightCtrl::eventHandler(eventID, msg);
-		}
+	
 	}
 	
 	//NOTE: delta_t is the diff in secs between messages. this may be useful
@@ -110,13 +100,17 @@ int cliSelectMidiPort() {
 		//Print the current port name at index pn
 		std::cout << "\tInput port #" << pn << ": " << portName << std::endl;
 	}
+	
+	//TODO Print quit prompt
 
 	//Keep asking for a valid input until one is given
 	unsigned int selection;
 	do {
 		std::cout << "\nChoose a port number: ";
 		std::cin >> selection;
-	} while (selection >= nPorts);
+	} while(selection >= nPorts);
+	
+	//TODO detect if quit is passed
 	
 	//Reset the cin flags and clear the istream buffer (causes problems if not)
 	std::cin.clear();
@@ -158,6 +152,8 @@ void openMidiPort(int port) {
 void cleanupMidi() {
 	delete midiin;
 	delete midiout;
+	
+	//TODO Clear Lighting RAM
 }
 
 /** Higher level MIDI functions ***********************************************/
@@ -173,37 +169,18 @@ void CLIDebugMsg(MidiMsg *debugMsg) {
 }
 
 /** Lighting Control Functions ************************************************/
-namespace LightCtrl {
+namespace Lighting {
 ////
-int getEventID(MidiMsg *msg) {
-	//Get the message type, the first byte of the message vector.
-	int msgTypeByte = (int)msg->at(0);
-	
-	//Go through all the trigger bytes and look for a match.
-	for(int leb = 0; leb < eventTriggerCount; leb++) {
-		if(msgTypeByte == eventTriggerByte[leb]) {		
-			return leb;
-		}
-	}
-	
-	//If no match is found
-	return -1;
-}
-////
-void eventHandler(int eventID, MidiMsg *msg) {
-	//Failsafe if input is a non-light event
-	if(eventID == -1) return;
-	
-	//Output message array
-	unsigned char midiOutMsg[3];
 
-			midiOutMsg[0] = 144;
-			midiOutMsg[1] = msg->at(1);
-			midiOutMsg[2] = 5; //Off
 
-	
-	//Send the MIDI message out.
-	midiout->sendMessage(midiOutMsg, 3);
+
+LightMan::LightMan(int lights) {
+	std::cout << lights << std::endl;
 }
+
 
 }; //nameapace LightCtrl
+
+
+
+

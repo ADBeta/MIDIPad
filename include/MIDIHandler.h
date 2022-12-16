@@ -2,7 +2,7 @@
 * This is part of the MIDIPad program
 *
 * This header/C++ is to control and read the MIDI device. This requres the
-* RtMidi Libraries, availible at https://github.com/thestk/rtmidi (preferably
+* RtMIDI Libraries, availible at https://github.com/thestk/rtmidi (preferably
 * through your package manager)
 *
 * MIDIPad is designed specifically around Linux, as windows has most of the 
@@ -26,33 +26,34 @@
 #include <limits>
 #include "RtMidi.h" //Through pacman is located in /usr/include
 
-/** RtMidi Vars/Functions *****************************************************/
+/** RtMIDI Vars/Functions *****************************************************/
 //MIDI Message type (multiple byte vector)
-typedef std::vector<unsigned char> MidiMsg;
+typedef std::vector<unsigned char> MIDIMsg;
 
-//RtMidiIn In and out objects
+//RtMIDIIn In and out objects
 extern RtMidiIn *midiin;
 extern RtMidiOut *midiout;
 
 //Debug flag. This will enable CLI output whenever a key is pressed. (see funct)
 extern bool MIDIDebug;
-void CLIDebugMsg(MidiMsg *);
+void CLIDebugMsg(MIDIMsg *);
 
 //Port selection and opening functions, for CLI and UI
-int cliSelectMidiPort();
-void openMidiPort(int);
+int cliSelectMIDIPort();
+void openMIDIPort(int);
 
 //Callback function. Executed every time a message is received.
 void getMsgAttributes(double, std::vector<unsigned char> *, void *);
 
 //Close the MIDI port, delete vectors and perform RAM cleanup.
-void cleanupMidi();
+void cleanupMIDI();
 
 /** Unified Key handling and Light Handling ***********************************/
 //TODO explain attributes and data TODO default?
 struct MIDIKey {
-	//MIDI Key ID. Byte as it is limited by MIDI Bytes.
-	unsigned char ID = 0;
+	//MIDI Key ID. MIDI max value is 127, but to keep obvious intent, using a
+	//signed int, so a key that has not been initilaised yet is -1.
+	int ID = -1;
 	
 	//MIDI Message Status byte triggers - pressed and released
 	unsigned char statusPressed = 0;
@@ -60,6 +61,10 @@ struct MIDIKey {
 	
 	//Does this key have a light?
 	bool hasLight = false;
+	
+	//What bytes to send if pressed and released
+	unsigned char lightPressed = 0;
+	unsigned char lightReleased = 0;
 	
 	//Identifier string. Optional but useful to keep track of which key is which
 	std::string identifier = "undefined";
